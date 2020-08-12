@@ -5,6 +5,7 @@ pool:
   vmImage: 'Ubuntu-16.04'
 
 variables:
+  vargroup: 'vargroup'
   resourcegroup: '$(resourcegroup)'
   workspace: '$(workspace)'
   experiment: '$(experiment)'
@@ -29,21 +30,21 @@ steps:
 - task: AzureCLI@1
   displayName: 'Install the CLI'
   inputs:
-    azureSubscription: '$(serviceconnection)'
+    azureSubscription: 'mlops-sc'
     scriptLocation: inlineScript
     inlineScript: 'az extension add -n azure-cli-ml'
 
 - task: AzureCLI@1
   displayName: 'Attach folder to workspace'
   inputs:
-    azureSubscription: '$(serviceconnection)'
+    azureSubscription: 'mlops-sc'
     scriptLocation: inlineScript
     inlineScript: 'az ml folder attach -e $(experiment) -w $(workspace) -g $(resourcegroup) --path $(Build.SourcesDirectory)'
 
 - task: AzureCLI@1
   displayName: 'Get or create AML Compute Target'
   inputs:
-    azureSubscription: '$(serviceconnection)'
+    azureSubscription: 'mlops-sc'
     scriptLocation: inlineScript
     inlineScript: 'az ml run submit-script -d ./environment_setup/dependencies.yml 
     ./aml_service/create_aml_cluster.py --aml_compute_target $(aml_compute_target) 
@@ -52,7 +53,7 @@ steps:
 - task: AzureCLI@1
   displayName: 'Master Pipeline'
   inputs:
-    azureSubscription: '$(serviceconnection)'
+    azureSubscription: 'mlops-sc'
     scriptLocation: inlineScript
     inlineScript: 'az ml run submit-script -d ./environment_setup/dependencies.yml 
     ./aml_service/pipelines_master.py --aml_compute_target $(aml_compute_target) 
