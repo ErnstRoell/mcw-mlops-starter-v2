@@ -5,13 +5,7 @@ pool:
   vmImage: 'Ubuntu-16.04'
 
 variables:
-  group: 'vargroup'
-  resourcegroup: '$(resourcegroup)'
-  workspace: '$(workspace)'
-  experiment: '$(experiment)'
-  aml_compute_target: '$(compute)'
-  model_name: 'compliance-classifier'
-  image_name: 'compliance-classifier-image'
+  -  group: vargroup
 
 steps:
 
@@ -30,21 +24,21 @@ steps:
 - task: AzureCLI@1
   displayName: 'Install the CLI'
   inputs:
-    azureSubscription: 'mlops-sc'
+    azureSubscription: '$(serviceconnection)'
     scriptLocation: inlineScript
     inlineScript: 'az extension add -n azure-cli-ml'
 
 - task: AzureCLI@1
   displayName: 'Attach folder to workspace'
   inputs:
-    azureSubscription: 'mlops-sc'
+    azureSubscription: '$(serviceconnection)'
     scriptLocation: inlineScript
     inlineScript: 'az ml folder attach -e $(experiment) -w $(workspace) -g $(resourcegroup) --path $(Build.SourcesDirectory)'
 
 - task: AzureCLI@1
   displayName: 'Get or create AML Compute Target'
   inputs:
-    azureSubscription: 'mlops-sc'
+    azureSubscription: '$(serviceconnection)'
     scriptLocation: inlineScript
     inlineScript: 'az ml run submit-script -d ./environment_setup/dependencies.yml 
     ./aml_service/create_aml_cluster.py --aml_compute_target $(aml_compute_target) 
@@ -53,7 +47,7 @@ steps:
 - task: AzureCLI@1
   displayName: 'Master Pipeline'
   inputs:
-    azureSubscription: 'mlops-sc'
+    azureSubscription: '$(serviceconnection)'
     scriptLocation: inlineScript
     inlineScript: 'az ml run submit-script -d ./environment_setup/dependencies.yml 
     ./aml_service/pipelines_master.py --aml_compute_target $(aml_compute_target) 
