@@ -74,7 +74,7 @@ run_amlcompute.environment.python.conda_dependencies = CondaDependencies.create(
     'onnxruntime==1.3.0'
 ])
 
-scripts_folder = 'scripts'
+scripts_folder = 'model/scripts'
 def_blob_store = ws.get_default_datastore()
 
 train_output = PipelineData('train_output', datastore=def_blob_store)
