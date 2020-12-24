@@ -50,7 +50,7 @@ steps:
     azureSubscription: '$(serviceconnection)'
     scriptLocation: inlineScript
     inlineScript: 'az ml run submit-script -d ./environment_setup/dependencies.yml 
-    ./aml_service/pipelines_master.py'
+    ./aml_service/pipelines_master.py --path $(Build.SourcesDirectory)'
 
 - task: CopyFiles@2
   displayName: 'Copy Files to: $(Build.ArtifactStagingDirectory)'

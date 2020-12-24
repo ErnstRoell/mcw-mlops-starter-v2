@@ -7,16 +7,18 @@ from azureml.core.conda_dependencies import CondaDependencies
 import numpy as np
 from azureml.core.authentication import AzureCliAuthentication
 
+parser = argparse.ArgumentParser("create_aml_cluster")
+parser.add_argument("--path", type=str, help="path", dest="path", required=True)
+args = parser.parse_args()
 
-
-print("SDK version:", azureml.core.VERSION) 
+print("Argument 1: %s" % args.path)
 
 print('creating AzureCliAuthentication...')
 cli_auth = AzureCliAuthentication()
 print('done creating AzureCliAuthentication!')
 
 print('get workspace...')
-ws = Workspace.from_config(auth=cli_auth)
+ws = Workspace.from_config(path=args.path, auth=cli_auth)
 print('done getting workspace!')
 
 
