@@ -13,3 +13,5 @@ dependencies:
 - pip:
   - azureml-sdk
   - azure-cli
+  - scikit-learn
+  - pandas
