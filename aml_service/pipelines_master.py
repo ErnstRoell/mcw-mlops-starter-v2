@@ -9,7 +9,7 @@ import numpy as np
 from azureml.core.authentication import AzureCliAuthentication
 import argparse
 
-parser = argparse.ArgumentParser("create_aml_cluster")
+parser = argparse.ArgumentParser("pipeline")
 parser.add_argument("--path", type=str, help="path", dest="path", required=True)
 args = parser.parse_args()
 
@@ -64,10 +64,10 @@ metrics = run.get_metrics()
 
 best_alpha = metrics['alpha'][np.argmin(metrics['mse'])]
 
-print('When alpha is {1:0.2f}, we have min MSE {0:0.2f}.'.format(
-    min(metrics['mse']), 
-    best_alpha
-))
+# print('When alpha is {1:0.2f}, we have min MSE {0:0.2f}.'.format(
+#     min(metrics['mse']), 
+#     best_alpha
+# ))
 
 
 
@@ -76,7 +76,7 @@ print('When alpha is {1:0.2f}, we have min MSE {0:0.2f}.'.format(
 
 # 
 # Supply a model name, and the full path to the serialized model file.
-model = run.register_model(model_name='best_ridge_model', model_path='./outputs/ridge_0.40.pkl')
+# model = run.register_model(model_name='best_ridge_model', model_path='./outputs/ridge_0.40.pkl')
 
-print("Registered model:\n --> Name: {}\n --> Version: {}\n --> URL: {}".format(model.name, model.version, model.url))
+# print("Registered model:\n --> Name: {}\n --> Version: {}\n --> URL: {}".format(model.name, model.version, model.url))
 
