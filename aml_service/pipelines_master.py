@@ -6,6 +6,7 @@ from azureml.core import ScriptRunConfig
 from azureml.core.conda_dependencies import CondaDependencies
 import numpy as np
 from azureml.core.authentication import AzureCliAuthentication
+import argparse
 
 parser = argparse.ArgumentParser("create_aml_cluster")
 parser.add_argument("--path", type=str, help="path", dest="path", required=True)
@@ -31,7 +32,10 @@ exp = Experiment(workspace=ws, name=experiment_name)
 # Editing a run configuration property on-fly.
 user_managed_env = Environment("user-managed-env")
 user_managed_env.python.user_managed_dependencies = True
-src = ScriptRunConfig(source_directory='./scripts/', script='train.py', environment=user_managed_env)
+src = ScriptRunConfig(source_directory='./scripts/', 
+                    script='train.py', 
+                    environment=user_managed_env)
+
 
 
 
