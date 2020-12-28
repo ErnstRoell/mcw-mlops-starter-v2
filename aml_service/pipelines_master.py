@@ -1,5 +1,6 @@
 import azureml.core
 from azureml.core import Environment
+from azureml.core.compute import AmlCompute
 from azureml.core.workspace import Workspace
 from azureml.core import Experiment
 from azureml.core import ScriptRunConfig
@@ -14,6 +15,10 @@ args = parser.parse_args()
 
 print("Argument 1: %s" % args.path)
 
+
+
+
+
 print('creating AzureCliAuthentication...')
 cli_auth = AzureCliAuthentication()
 print('done creating AzureCliAuthentication!')
@@ -22,37 +27,34 @@ print('get workspace...')
 ws = Workspace.from_config(path=args.path, auth=cli_auth)
 print('done getting workspace!')
 
+print("looking for existing compute target.")
+aml_compute = AmlCompute(ws, 'aml-compute-7381')
+print("found existing compute target.")
+
 
 print(ws.name, ws.resource_group, ws.location, ws.subscription_id, sep='\n')
 experiment_name = 'train-on-local'
 exp = Experiment(workspace=ws, name=experiment_name)
 
 
+####################################################
+####################################################
+
+
 
 # Editing a run configuration property on-fly.
-user_managed_env = Environment("user-managed-env")
-user_managed_env.python.user_managed_dependencies = True
+# user_managed_env = Environment("user-managed-env")
+# user_managed_env.python.user_managed_dependencies = True
+
+myenv = Environment("myenv")
+myenv.docker.enabled = True
+myenv.python.conda_dependencies = CondaDependencies.create(conda_packages=['scikit-learn', 'packaging'])
+
 src = ScriptRunConfig(source_directory='./scripts/', 
                     script='train.py', 
-                    environment=user_managed_env)
+                    environment=myenv,
+                    compute_target=aml_compute)
 
-
-
-
-
-run = exp.submit(src)
-run.wait_for_completion(show_output=True)
-
-# 6.B System-managed environment
-
-system_managed_env = Environment("system-managed-env")
-system_managed_env.python.user_managed_dependencies = False
-
-# Specify conda dependencies with scikit-learn
-cd = CondaDependencies.create(conda_packages=['scikit-learn'])
-system_managed_env.python.conda_dependencies = cd
-
-src.run_config.environment = system_managed_env
 run = exp.submit(src)
 run.wait_for_completion(show_output=True)
 
