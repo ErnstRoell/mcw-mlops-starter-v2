@@ -8,12 +8,14 @@ from azureml.core.conda_dependencies import CondaDependencies
 import numpy as np
 from azureml.core.authentication import AzureCliAuthentication
 import argparse
+import os 
 
 parser = argparse.ArgumentParser("pipeline")
 parser.add_argument("--path", type=str, help="path", dest="path", required=True)
 args = parser.parse_args()
 
 print("Argument 1: %s" % args.path)
+print(os.listdir(args.path))
 
 
 
@@ -48,9 +50,12 @@ exp = Experiment(workspace=ws, name=experiment_name)
 
 myenv = Environment("myenv")
 myenv.docker.enabled = True
-myenv.python.conda_dependencies = CondaDependencies.create(conda_packages=['scikit-learn', 'packaging'])
+myenv.python.user_managed_dependencies = False
+cd = CondaDependencies.create(conda_packages=['scikit-learn', 'packaging'])
+cd.add_pip_package("azureml-defaults")
+myenv.python.conda_dependencies = cd
 
-src = ScriptRunConfig(source_directory='./scripts/', 
+src = ScriptRunConfig(source_directory=f"{args.path}/scripts/", 
                     script='train.py', 
                     environment=myenv,
                     compute_target=aml_compute)
